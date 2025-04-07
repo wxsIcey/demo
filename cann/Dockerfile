@@ -1,6 +1,6 @@
 # Arguments
 ARG PY_VERSION=3.9
-ARG BASE=test/python:3.9.1-oe2403lts
+ARG BASE=wxsicey/python:3.9.1-oe2403lts
 
 # Stage 1: Install CANN
 FROM ascendai/python:${PY_VERSION}-openeuler22.03 AS cann-installer
