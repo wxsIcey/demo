@@ -8,7 +8,7 @@ FROM ascendai/python:${PY_VERSION}-openeuler22.03 AS cann-installer
 # Arguments
 ARG TARGETARCH
 ARG CANN_CHIP=910b
-ARG CANN_VERSION=8.0.RC2.alpha001
+ARG CANN_VERSION=8.0.RC2.beta1
 ARG BASE_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com
 
 # Install dependencies
@@ -102,6 +102,11 @@ RUN if [ "${CANN_VERSION}" = "8.0.0" ]; then \
     printf "Y\n" | ~/Ascend-cann-nnal.run --install && \
     rm -f ~/Ascend-cann-nnal.run; \
 fi
+
+RUN rm -rf /var/cache/yum && \
+    rm -rf /var/lib/buildkit/* && \
+    rm -rf /tmp/*
+
     
 # Stage 2: Copy results from previous stages
 FROM ${BASE} AS official
