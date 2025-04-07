@@ -1,4 +1,4 @@
-ARG BASE=wxsicey/cann:8.0.RC2.beta1-python3.9.1-oe2403lts
+ARG BASE=wxsicey/cann:8.0.RC2-python3.9.1-oe2403lts
 
 FROM ${BASE}
 
