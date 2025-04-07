@@ -458,14 +458,14 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/cann:8.0.0-python3.9.1-oe2403lts \
+          docker buildx imagetools create -t docker.io/wxsicey/cann:8.0.RC2.alpha001-python3.9.1-oe2403lts \
             $(printf 'wxsicey/cann@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"cann\", \"tag\": \"8.0.0-python3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"cann\", \"tag\": \"8.0.RC2.alpha001-python3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -617,14 +617,14 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/pytorch:2.5.1-cann8.0.0-python3.9.1-oe2403lts \
+          docker buildx imagetools create -t docker.io/wxsicey/pytorch:2.5.1-cann8.0.RC2.alpha001-python3.9.1-oe2403lts \
             $(printf 'wxsicey/pytorch@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"pytorch\", \"tag\": \"2.5.1-cann8.0.0-python3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"pytorch\", \"tag\": \"2.5.1-cann8.0.RC2.alpha001-python3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
