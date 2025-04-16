@@ -102,11 +102,6 @@ RUN if [ "${CANN_VERSION}" = "8.0.0" ]; then \
     printf "Y\n" | ~/Ascend-cann-nnal.run --install && \
     rm -f ~/Ascend-cann-nnal.run; \
 fi
-
-RUN rm -rf /var/cache/yum && \
-    rm -rf /var/lib/buildkit/* && \
-    rm -rf /tmp/*
-
     
 # Stage 2: Copy results from previous stages
 FROM ${BASE} AS official
