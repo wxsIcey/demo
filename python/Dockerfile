@@ -1,8 +1,8 @@
-ARG BASE=wxsicey/openeuler:24.03-lts
+ARG BASE=openeuler/openeuler:24.09
 
 FROM openeuler/openeuler:24.03-lts as builder
 
-ARG VERSION=3.9.1
+ARG VERSION=3.13.2
 
 ARG TARGETARCH
 
