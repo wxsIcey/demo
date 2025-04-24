@@ -1,4 +1,4 @@
-ARG BASE=wxsicey/openeuler:24.09
+ARG BASE=wxsicey/openeuler:25.03
 
 FROM openeuler/openeuler:24.03-lts as builder
 
