@@ -1,4 +1,4 @@
-ARG BASE=wxsicey/python:3.9.8-oe2503
+ARG BASE=wxsicey/python:3.9.9-oe2409
 
 FROM ${BASE}
 

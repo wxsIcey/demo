@@ -140,14 +140,14 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/openeuler:25.03 \
+          docker buildx imagetools create -t docker.io/wxsicey/openeuler:24.09 \
             $(printf 'wxsicey/openeuler@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"openeuler\", \"tag\": \"25.03\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"openeuler\", \"tag\": \"24.09\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -299,14 +299,14 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/python:3.9.8-oe2503 \
+          docker buildx imagetools create -t docker.io/wxsicey/python:3.9.9-oe2409 \
             $(printf 'wxsicey/python@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"python\", \"tag\": \"3.9.8-oe2503\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"python\", \"tag\": \"3.9.9-oe2409\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -458,14 +458,14 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/pytorch:2.7.0-python3.9.8-oe2503 \
+          docker buildx imagetools create -t docker.io/wxsicey/pytorch:2.7.0-python3.9.9-oe2409 \
             $(printf 'wxsicey/pytorch@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"pytorch\", \"tag\": \"2.7.0-python3.9.8-oe2503\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"pytorch\", \"tag\": \"2.7.0-python3.9.9-oe2409\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
