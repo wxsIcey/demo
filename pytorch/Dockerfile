@@ -1,4 +1,4 @@
-ARG BASE=openeuler/python:3.9.8-oe2409
+ARG BASE=openeuler/python:3.9.8-oe2503
 
 FROM ${BASE}
 
