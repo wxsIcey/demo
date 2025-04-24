@@ -171,17 +171,17 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/openeuler/openeuler:24.09 \
+          docker buildx imagetools create -t docker.io/openeuler/openeuler:25.03 \
             $(printf 'openeuler/openeuler@sha256:%s ' *)
           
-          docker buildx imagetools create -t quay.io/openeuler/openeuler:24.09 \
+          docker buildx imagetools create -t quay.io/openeuler/openeuler:25.03 \
             $(printf 'openeuler/openeuler@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"openeuler\", \"tag\": \"24.09\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"openeuler\", \"tag\": \"25.03\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -364,17 +364,17 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/openeuler/python:3.9.8-oe2409 \
+          docker buildx imagetools create -t docker.io/openeuler/python:3.9.8-oe2503 \
             $(printf 'openeuler/python@sha256:%s ' *)
           
-          docker buildx imagetools create -t quay.io/openeuler/python:3.9.8-oe2409 \
+          docker buildx imagetools create -t quay.io/openeuler/python:3.9.8-oe2503 \
             $(printf 'openeuler/python@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"python\", \"tag\": \"3.9.8-oe2409\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"python\", \"tag\": \"3.9.8-oe2503\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -557,17 +557,17 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/openeuler/pytorch:2.7.0-python3.9.8-oe2409 \
+          docker buildx imagetools create -t docker.io/openeuler/pytorch:2.7.0-python3.9.8-oe2503 \
             $(printf 'openeuler/pytorch@sha256:%s ' *)
           
-          docker buildx imagetools create -t quay.io/openeuler/pytorch:2.7.0-python3.9.8-oe2409 \
+          docker buildx imagetools create -t quay.io/openeuler/pytorch:2.7.0-python3.9.8-oe2503 \
             $(printf 'openeuler/pytorch@sha256:%s ' *)
           
 
       - name: Check status
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"pytorch\", \"tag\": \"2.7.0-python3.9.8-oe2409\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: "{ \"repository\": \"openeuler\", \"name\": \"pytorch\", \"tag\": \"2.7.0-python3.9.8-oe2503\", \"status\": \"${{ job.status }}\" }"
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
