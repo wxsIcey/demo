@@ -1,8 +1,8 @@
-ARG BASE=wxsicey/cann:8.0.RC2.alpha001-python3.9.1-oe2403lts
+ARG BASE=openeuler/python:3.9.8-oe2409
 
 FROM ${BASE}
 
-ARG VERSION=2.5.1
+ARG VERSION=2.6.0
 
 RUN yum install -y python3-pip
 
