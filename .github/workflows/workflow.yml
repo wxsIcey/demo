@@ -2,23 +2,30 @@
 name: EulerPublisher 🚀
 on: [push]
 jobs:
-  
-  build-openeuler-x86_64:
+  build-openeuler:
+    strategy:
+      matrix:
+        include:
+          
+          - arch: x86_64
+            runner: ubuntu-24.04
+          
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+          
     
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up QEMU
@@ -31,10 +38,10 @@ jobs:
         uses: docker/build-push-action@v6
         id: build
         with: 
-          platforms: x86_64
+          platforms: ${{ matrix.arch }}
           tags: |
             
-            docker.io/wxsicey/openeuler
+            docker.io/zhihang161013/openeuler
             
           file: ${{ github.workspace }}/openeuler/Dockerfile
           context: ${{ github.workspace }}/openeuler
@@ -49,71 +56,15 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-openeuler-x86_64
+          name: digests-openeuler-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
-  
-  build-openeuler-aarch64:
-    
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
-      
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push by digest
-        uses: docker/build-push-action@v6
-        id: build
-        with: 
-          platforms: aarch64
-          tags: |
-            
-            docker.io/wxsicey/openeuler
-            
-          file: ${{ github.workspace }}/openeuler/Dockerfile
-          context: ${{ github.workspace }}/openeuler
-          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
-
-      - name: Export digest
-        run: |
-          mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "${{ runner.temp }}/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-openeuler-aarch64
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
-  
 
   push-openeuler:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
-      
-      - build-openeuler-x86_64
-      
-      - build-openeuler-aarch64
-      
+      - build-openeuler
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -123,14 +74,12 @@ jobs:
           merge-multiple: true
 
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up Docker Buildx
@@ -140,14 +89,33 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/openeuler:24.03-lts \
-            $(printf 'wxsicey/openeuler@sha256:%s ' *)
+          docker buildx imagetools create -t docker.io/zhihang161013/openeuler:25.03 \
+            $(printf 'zhihang161013/openeuler@sha256:%s ' *)
           
+          echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
-      - name: Check status
+      - name: Notify status to EulerPublisher
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"openeuler\", \"tag\": \"24.03-lts\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: |
+            {
+              "trigger": {
+                "type": "Github Actions",
+                "timestamp": "${{ env.timestamp }}"
+              },
+              "artifact": {
+                "type": "container",
+                "info": {
+                  "archs": ["x86_64", "aarch64"],
+                  "registries": ["docker.io"],
+                  "repository": "zhihang161013",
+                  "name": "openeuler",
+                  "version": "25.03",
+                  "tag": "25.03",
+                  "status": "${{ job.status }}"
+                }
+              }
+            }
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -155,26 +123,35 @@ jobs:
           RABBIT_PASSWORD: ${{ secrets.RABBIT_PASSWORD }}
           RABBIT_PORT: 5672
           RABBIT_USE_SSL: false
-          DURABLE: false  
-  build-python-x86_64:
+          DURABLE: false
+
+  build-python:
+    strategy:
+      matrix:
+        include:
+          
+          - arch: x86_64
+            runner: ubuntu-24.04
+          
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+          
     
     needs: 
       - push-openeuler
     
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up QEMU
@@ -187,10 +164,10 @@ jobs:
         uses: docker/build-push-action@v6
         id: build
         with: 
-          platforms: x86_64
+          platforms: ${{ matrix.arch }}
           tags: |
             
-            docker.io/wxsicey/python
+            docker.io/zhihang161013/python
             
           file: ${{ github.workspace }}/python/Dockerfile
           context: ${{ github.workspace }}/python
@@ -205,74 +182,15 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-python-x86_64
+          name: digests-python-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
-  
-  build-python-aarch64:
-    
-    needs: 
-      - push-openeuler
-    
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
-      
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push by digest
-        uses: docker/build-push-action@v6
-        id: build
-        with: 
-          platforms: aarch64
-          tags: |
-            
-            docker.io/wxsicey/python
-            
-          file: ${{ github.workspace }}/python/Dockerfile
-          context: ${{ github.workspace }}/python
-          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
-
-      - name: Export digest
-        run: |
-          mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "${{ runner.temp }}/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-python-aarch64
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
-  
 
   push-python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
-      
-      - build-python-x86_64
-      
-      - build-python-aarch64
-      
+      - build-python
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -282,14 +200,12 @@ jobs:
           merge-multiple: true
 
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up Docker Buildx
@@ -299,14 +215,33 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/python:3.9.1-oe2403lts \
-            $(printf 'wxsicey/python@sha256:%s ' *)
+          docker buildx imagetools create -t docker.io/zhihang161013/python:3.9.1-oe2503 \
+            $(printf 'zhihang161013/python@sha256:%s ' *)
           
+          echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
-      - name: Check status
+      - name: Notify status to EulerPublisher
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"python\", \"tag\": \"3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: |
+            {
+              "trigger": {
+                "type": "Github Actions",
+                "timestamp": "${{ env.timestamp }}"
+              },
+              "artifact": {
+                "type": "container",
+                "info": {
+                  "archs": ["x86_64", "aarch64"],
+                  "registries": ["docker.io"],
+                  "repository": "zhihang161013",
+                  "name": "python",
+                  "version": "3.9.1",
+                  "tag": "3.9.1-oe2503",
+                  "status": "${{ job.status }}"
+                }
+              }
+            }
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -314,26 +249,35 @@ jobs:
           RABBIT_PASSWORD: ${{ secrets.RABBIT_PASSWORD }}
           RABBIT_PORT: 5672
           RABBIT_USE_SSL: false
-          DURABLE: false  
-  build-pytorch-x86_64:
+          DURABLE: false
+
+  build-pytorch:
+    strategy:
+      matrix:
+        include:
+          
+          - arch: x86_64
+            runner: ubuntu-24.04
+          
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+          
     
     needs: 
       - push-python
     
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up QEMU
@@ -346,10 +290,10 @@ jobs:
         uses: docker/build-push-action@v6
         id: build
         with: 
-          platforms: x86_64
+          platforms: ${{ matrix.arch }}
           tags: |
             
-            docker.io/wxsicey/pytorch
+            docker.io/zhihang161013/pytorch
             
           file: ${{ github.workspace }}/pytorch/Dockerfile
           context: ${{ github.workspace }}/pytorch
@@ -364,74 +308,15 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-pytorch-x86_64
+          name: digests-pytorch-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
-  
-  build-pytorch-aarch64:
-    
-    needs: 
-      - push-python
-    
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
-      
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push by digest
-        uses: docker/build-push-action@v6
-        id: build
-        with: 
-          platforms: aarch64
-          tags: |
-            
-            docker.io/wxsicey/pytorch
-            
-          file: ${{ github.workspace }}/pytorch/Dockerfile
-          context: ${{ github.workspace }}/pytorch
-          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
-
-      - name: Export digest
-        run: |
-          mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "${{ runner.temp }}/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-pytorch-aarch64
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
-  
 
   push-pytorch:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
-      
-      - build-pytorch-x86_64
-      
-      - build-pytorch-aarch64
-      
+      - build-pytorch
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -441,14 +326,12 @@ jobs:
           merge-multiple: true
 
       
-        
-      - name: Login to Docker Hub
+      - name: Login to docker.io
         uses: docker/login-action@v3
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+          username: ${{ secrets.DOCKER_IO_USERNAME }}
+          password: ${{ secrets.DOCKER_IO_TOKEN }}
       
 
       - name: Set up Docker Buildx
@@ -458,14 +341,33 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t docker.io/wxsicey/pytorch:2.5.1-python3.9.1-oe2403lts \
-            $(printf 'wxsicey/pytorch@sha256:%s ' *)
+          docker buildx imagetools create -t docker.io/zhihang161013/pytorch:2.4.1-python3.9.1-oe2503 \
+            $(printf 'zhihang161013/pytorch@sha256:%s ' *)
           
+          echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
-      - name: Check status
+      - name: Notify status to EulerPublisher
         uses: eferraris/rabbit-sender@v1
         with:
-          MESSAGE: "{ \"repository\": \"wxsicey\", \"name\": \"pytorch\", \"tag\": \"2.5.1-python3.9.1-oe2403lts\", \"status\": \"${{ job.status }}\" }"
+          MESSAGE: |
+            {
+              "trigger": {
+                "type": "Github Actions",
+                "timestamp": "${{ env.timestamp }}"
+              },
+              "artifact": {
+                "type": "container",
+                "info": {
+                  "archs": ["x86_64", "aarch64"],
+                  "registries": ["docker.io"],
+                  "repository": "zhihang161013",
+                  "name": "pytorch",
+                  "version": "2.4.1",
+                  "tag": "2.4.1-python3.9.1-oe2503",
+                  "status": "${{ job.status }}"
+                }
+              }
+            }
           RABBIT_EXCHANGE_NAME: "eulerpublisher"
           ROUTING_KEY: "tracker"
           RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
@@ -474,3 +376,4 @@ jobs:
           RABBIT_PORT: 5672
           RABBIT_USE_SSL: false
           DURABLE: false
+
