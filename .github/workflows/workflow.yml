@@ -90,7 +90,7 @@ jobs:
         run: |
           
           docker buildx imagetools create -t quay.io/wxsicey/openeuler:25.03 \
-            $(printf 'wxsicey/openeuler@sha256:%s ' *)
+            $(printf 'quay.io/wxsicey/openeuler@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
@@ -216,7 +216,7 @@ jobs:
         run: |
           
           docker buildx imagetools create -t quay.io/wxsicey/python:3.9.1-oe2503 \
-            $(printf 'wxsicey/python@sha256:%s ' *)
+            $(printf 'quay.io/wxsicey/python@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
@@ -342,7 +342,7 @@ jobs:
         run: |
           
           docker buildx imagetools create -t quay.io/wxsicey/pytorch:2.4.1-python3.9.1-oe2503 \
-            $(printf 'wxsicey/pytorch@sha256:%s ' *)
+            $(printf 'quay.io/wxsicey/pytorch@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
