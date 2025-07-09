@@ -1,4 +1,4 @@
-ARG BASE=zhihang161013/python:3.9.1-oe2503
+ARG BASE=wxsicey/python:3.9.1-oe2503
 
 ARG VERSION=2.4.1
 

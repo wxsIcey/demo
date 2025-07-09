@@ -38,7 +38,7 @@ jobs:
           platforms: ${{ matrix.arch }}
           tags: |
             
-            quay.io/zhihang161013/openeuler
+            quay.io/wxsicey/openeuler
             
           file: ${{ github.workspace }}/openeuler/Dockerfile
           context: ${{ github.workspace }}/openeuler
@@ -86,8 +86,8 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t quay.io/zhihang161013/openeuler:25.03 \
-            $(printf 'zhihang161013/openeuler@sha256:%s ' *)
+          docker buildx imagetools create -t quay.io/wxsicey/openeuler:25.03 \
+            $(printf 'wxsicey/openeuler@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
@@ -105,7 +105,7 @@ jobs:
                 "info": {
                   "archs": ["x86_64"],
                   "registries": ["quay.io"],
-                  "repository": "zhihang161013",
+                  "repository": "wxsicey",
                   "name": "openeuler",
                   "version": "25.03",
                   "tag": "25.03",
@@ -161,7 +161,7 @@ jobs:
           platforms: ${{ matrix.arch }}
           tags: |
             
-            quay.io/zhihang161013/python
+            quay.io/wxsicey/python
             
           file: ${{ github.workspace }}/python/Dockerfile
           context: ${{ github.workspace }}/python
@@ -209,8 +209,8 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t quay.io/zhihang161013/python:3.9.1-oe2503 \
-            $(printf 'zhihang161013/python@sha256:%s ' *)
+          docker buildx imagetools create -t quay.io/wxsicey/python:3.9.1-oe2503 \
+            $(printf 'wxsicey/python@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
@@ -228,7 +228,7 @@ jobs:
                 "info": {
                   "archs": ["x86_64"],
                   "registries": ["quay.io"],
-                  "repository": "zhihang161013",
+                  "repository": "wxsicey",
                   "name": "python",
                   "version": "3.9.1",
                   "tag": "3.9.1-oe2503",
@@ -284,7 +284,7 @@ jobs:
           platforms: ${{ matrix.arch }}
           tags: |
             
-            quay.io/zhihang161013/pytorch
+            quay.io/wxsicey/pytorch
             
           file: ${{ github.workspace }}/pytorch/Dockerfile
           context: ${{ github.workspace }}/pytorch
@@ -332,8 +332,8 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           
-          docker buildx imagetools create -t quay.io/zhihang161013/pytorch:2.4.1-python3.9.1-oe2503 \
-            $(printf 'zhihang161013/pytorch@sha256:%s ' *)
+          docker buildx imagetools create -t quay.io/wxsicey/pytorch:2.4.1-python3.9.1-oe2503 \
+            $(printf 'wxsicey/pytorch@sha256:%s ' *)
           
           echo "timestamp=$(date -u +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
@@ -351,7 +351,7 @@ jobs:
                 "info": {
                   "archs": ["x86_64"],
                   "registries": ["quay.io"],
-                  "repository": "zhihang161013",
+                  "repository": "wxsicey",
                   "name": "pytorch",
                   "version": "2.4.1",
                   "tag": "2.4.1-python3.9.1-oe2503",
