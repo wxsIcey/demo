@@ -10,9 +10,6 @@ jobs:
           - arch: x86_64
             runner: ubuntu-24.04
           
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-          
     
     runs-on: ${{ matrix.runner }}
     steps:
@@ -106,7 +103,7 @@ jobs:
               "artifact": {
                 "type": "container",
                 "info": {
-                  "archs": ["x86_64", "aarch64"],
+                  "archs": ["x86_64"],
                   "registries": ["quay.io"],
                   "repository": "wxsicey",
                   "name": "openeuler",
@@ -132,9 +129,6 @@ jobs:
           
           - arch: x86_64
             runner: ubuntu-24.04
-          
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
           
     
     needs: 
@@ -232,7 +226,7 @@ jobs:
               "artifact": {
                 "type": "container",
                 "info": {
-                  "archs": ["x86_64", "aarch64"],
+                  "archs": ["x86_64"],
                   "registries": ["quay.io"],
                   "repository": "wxsicey",
                   "name": "python",
@@ -258,9 +252,6 @@ jobs:
           
           - arch: x86_64
             runner: ubuntu-24.04
-          
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
           
     
     needs: 
@@ -358,7 +349,7 @@ jobs:
               "artifact": {
                 "type": "container",
                 "info": {
-                  "archs": ["x86_64", "aarch64"],
+                  "archs": ["x86_64"],
                   "registries": ["quay.io"],
                   "repository": "wxsicey",
                   "name": "pytorch",
