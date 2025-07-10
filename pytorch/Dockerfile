@@ -1,4 +1,4 @@
-ARG BASE=wxsicey/python:3.9.1-oe2503
+ARG BASE=['quay.io']/wxsicey/python:3.9.1-oe2503
 
 ARG VERSION=2.4.1
 

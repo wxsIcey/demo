@@ -1,4 +1,4 @@
-ARG BASE=wxsicey/openeuler:25.03
+ARG BASE=['quay.io']/wxsicey/openeuler:25.03
 ARG VERSION=3.9.1
 
 FROM ${BASE} as builder
